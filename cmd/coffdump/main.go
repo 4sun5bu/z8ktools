@@ -41,6 +41,14 @@ func main() {
 	}
 	z8kcoff.PrintRelocations(relocs)
 
+	var syms []z8kcoff.Symbol
+	syms, err = z8kcoff.GetSymbols(file, hdr)
+	z8kcoff.PrintSymbols(syms)
+
+	var strs []string
+	strs, err = z8kcoff.GetStrings(file, hdr)
+	z8kcoff.PrintStrings(strs)
+
 	for _, scn := range scns {
 		if scn.Scnptr == 0 {
 			continue

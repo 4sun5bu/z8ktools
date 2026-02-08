@@ -1,4 +1,4 @@
 *.o
 .zed
-coffdump
+cmd/coffdump/coffdump
 
