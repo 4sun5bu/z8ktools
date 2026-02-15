@@ -38,8 +38,24 @@ func PrintSections(scns []Section) {
 		fmt.Printf("     scnoff: 0x%06x", scn.Scnptr)
 		fmt.Printf("  reloff: 0x%06x", scn.Relptr)
 		fmt.Printf("  nreloc: %2d", scn.Nreloc)
-		fmt.Printf("  flags: 0x%06x\n", scn.Flags)
+		fmt.Printf("  flags: 0x%06x - ", scn.Flags)
+		printSecType(scn.Flags)
 	}
+}
+
+func printSecType(typ uint32) {
+	var typstr string
+	switch typ {
+	case SecText:
+		typstr = "Text Seg"
+	case SecData:
+		typstr = "Data Seg"
+	case SecBSS:
+		typstr = "BSS Seg"
+	default:
+		typstr = "Unknown"
+	}
+	fmt.Println(typstr)
 }
 
 func GetSectionData(fl *os.File, scn Section) ([]byte, error) {

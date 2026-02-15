@@ -23,6 +23,10 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	if hdr.Flags == 0x8000 {
+		fmt.Println("Not z8k-coff format")
+		os.Exit(1)
+	}
 	z8kcoff.PrintFileHeader(hdr)
 
 	var scns []z8kcoff.Section

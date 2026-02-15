@@ -53,9 +53,27 @@ func PrintSymbols(syms []Symbol) {
 		fmt.Printf(" scnum: %d ", sym.Scnum)
 		fmt.Printf(" type: 0x%04x\n", sym.Type)
 		fmt.Printf("     sclass: 0x%04x ", sym.Sclass)
-		fmt.Printf(" numaux: %d\n", sym.Numaux)
+		fmt.Printf(" numaux: %d - ", sym.Numaux)
+		printSymClass(sym.Sclass)
 		naux = sym.Numaux
 	}
+}
+
+func printSymClass(clas uint8) {
+	var clsstr string
+	switch clas {
+	case ClsNull:
+		clsstr = "No entry"
+	case ClsExtSym:
+		clsstr = "Ext symb"
+	case ClsStatSym:
+		clsstr = "Static symb"
+	case ClsLabel:
+		clsstr = "Label"
+	default:
+		clsstr = "Unknown"
+	}
+	fmt.Println(clsstr)
 }
 
 func GetStrings(fl *os.File, hdr Header) ([]string, error) {

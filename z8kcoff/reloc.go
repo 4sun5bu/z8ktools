@@ -39,7 +39,36 @@ func PrintRelocations(rels [][]Relocation) {
 			fmt.Printf("  scnum: %d", n+1)
 			fmt.Printf("  reloc vaddr: 0x%06x", rel.Vaddr)
 			fmt.Printf("  symndx: %2d", rel.Symndx)
-			fmt.Printf("  type  0x%04x\n", rel.Type)
+			fmt.Printf("  type  0x%04x - ", rel.Type)
+			printRelType(rel.Type)
 		}
 	}
+}
+
+func printRelType(typ uint16) {
+	var typstr string
+	switch typ {
+	case RelWAbs:
+		typstr = "16bit Abs"
+	case RelJrDsp:
+		typstr = "Jr Disp"
+	case RelLAbs:
+		typstr = "32bit Abs"
+	case RelBAbs:
+		typstr = "8bit Abs"
+	case RelLwNbl:
+		typstr = "Lower Nibble"
+	case RelWPCRel:
+		typstr = "16bit PC rel"
+	case RelCallr:
+		typstr = "Callr Disp"
+	case RelSegNum:
+		typstr = "Segment"
+	case RelUpNbl:
+		typstr = "Upper Nibble"
+	case RelDjnzDsp:
+		typstr = "Djnz Disp"
+		typstr = "Unknown"
+	}
+	fmt.Println(typstr)
 }
