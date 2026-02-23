@@ -9,13 +9,22 @@ import (
 
 type Header struct {
 	Magic  uint16
-	Nscns  uint16
+	NScns  uint16
 	Timdat uint32
 	Symptr uint32
-	Nsyms  uint32
+	NSyms  uint32
 	Opthdr uint16
 	Flags  uint16
 }
+
+const (
+	TypeZ8002 = 0x2000
+	TypeZ8001 = 0x1000
+	BigEndian = 0x0200
+	NoLineNo  = 0x0004
+	NoSymbol  = 0x0008
+	NoReloc   = 0x0001
+)
 
 type Section struct {
 	Name    [8]byte
@@ -30,6 +39,12 @@ type Section struct {
 	Flags   uint32
 }
 
+const (
+	SecText = 0x0020
+	SecData = 0x0040
+	SecBSS  = 0x0080
+)
+
 type Relocation struct {
 	Vaddr  uint32
 	Symndx uint32
@@ -38,8 +53,21 @@ type Relocation struct {
 	Stuff  uint16
 }
 
+const (
+	RelWAbs    = 0x01
+	RelJrDsp   = 0x02
+	RelLAbs    = 0x11
+	RelBAbs    = 0x22
+	RelLwNbl   = 0x23
+	RelWPCRel  = 0x04
+	RelCallr   = 0x05
+	RelSegNum  = 0x10
+	RelUpNbl   = 0x24
+	RelDjnzDsp = 0x25
+)
+
 type Symbol struct {
-	Name   [8]uint8
+	Name   [8]byte
 	Value  uint32
 	Scnum  int16
 	Type   uint16
@@ -47,32 +75,12 @@ type Symbol struct {
 	Numaux uint8
 }
 
-const TypZ8002 uint16 = 0x2000
-const TypZ8001 uint16 = 0x1000
-const TypBigEndian uint16 = 0x0200
-const TypNoLno = 0x0004
-const TypNoSym = 0x0008
-const TypNoRel = 0x0001
-
-const SecText uint32 = 0x0020
-const SecData uint32 = 0x0040
-const SecBSS uint32 = 0x0080
-
-const RelWAbs uint16 = 0x01
-const RelJrDsp uint16 = 0x02
-const RelLAbs uint16 = 0x11
-const RelBAbs uint16 = 0x22
-const RelLwNbl uint16 = 0x23
-const RelWPCRel uint16 = 0x04
-const RelCallr uint16 = 0x05
-const RelSegNum uint16 = 0x10
-const RelUpNbl uint16 = 0x24
-const RelDjnzDsp uint16 = 0x25
-
-const ClsNull uint8 = 0
-const ClsExtSym uint8 = 2
-const ClsStatSym uint8 = 3
-const ClsLabel uint8 = 6
+const (
+	ClassNull    = 0
+	ClassExtSym  = 2
+	ClassStatSym = 3
+	ClassLabel   = 6
+)
 
 func GetFileHeader(fl *os.File) (Header, error) {
 	var hdr Header
@@ -86,25 +94,25 @@ func GetFileHeader(fl *os.File) (Header, error) {
 func PrintFileHeader(hdr Header) {
 	fmt.Println("[Header]")
 	fmt.Printf("  magic : 0x%04x ", hdr.Magic)
-	fmt.Printf("  nscns : %2d ", hdr.Nscns)
+	fmt.Printf("  nscns : %2d ", hdr.NScns)
 	fmt.Printf("  symoff : 0x%06x", hdr.Symptr)
-	fmt.Printf("  nsyms : %3d ", hdr.Nsyms)
+	fmt.Printf("  nsyms : %3d ", hdr.NSyms)
 	fmt.Printf("  flags : 0x%04x\n", hdr.Flags)
 	switch hdr.Flags & 0x3000 {
-	case TypZ8001:
+	case TypeZ8001:
 		fmt.Printf("  Z8001,")
-	case TypZ8002:
+	case TypeZ8002:
 		fmt.Printf("  Z8002,")
 	default:
 		fmt.Printf("  No segment type,")
 	}
-	if (hdr.Flags & TypNoLno) != 0 {
+	if (hdr.Flags & NoLineNo) != 0 {
 		fmt.Printf(" line number stripped,")
 	}
-	if (hdr.Flags & TypNoSym) != 0 {
+	if (hdr.Flags & NoSymbol) != 0 {
 		fmt.Printf(" symbol table stripped,")
 	}
-	if (hdr.Flags & TypNoRel) != 0 {
+	if (hdr.Flags & NoReloc) != 0 {
 		fmt.Printf(" relocation info stripped,")
 	}
 	fmt.Printf("\b\n")

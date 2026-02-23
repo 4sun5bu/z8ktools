@@ -8,6 +8,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
+		fmt.Println("No input file")
 		os.Exit(1)
 	}
 	file, err := os.Open(os.Args[1])
@@ -30,7 +31,7 @@ func main() {
 	z8kcoff.PrintFileHeader(hdr)
 
 	var scns []z8kcoff.Section
-	scns, err = z8kcoff.GetSections(file, hdr.Nscns)
+	scns, err = z8kcoff.GetSections(file, hdr.NScns)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

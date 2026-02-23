@@ -13,7 +13,7 @@ func GetSymbols(fl *os.File, hdr Header) ([]Symbol, error) {
 	_, err := fl.Seek(int64(hdr.Symptr), io.SeekStart)
 	var syms []Symbol
 	var symb Symbol
-	for n := 0; n < int(hdr.Nsyms); n++ {
+	for n := 0; n < int(hdr.NSyms); n++ {
 		if err != nil {
 			return nil, errors.New("symbol not read")
 		}
@@ -62,13 +62,13 @@ func PrintSymbols(syms []Symbol) {
 func printSymClass(clas uint8) {
 	var clsstr string
 	switch clas {
-	case ClsNull:
+	case ClassNull:
 		clsstr = "No entry"
-	case ClsExtSym:
+	case ClassExtSym:
 		clsstr = "Ext symb"
-	case ClsStatSym:
+	case ClassStatSym:
 		clsstr = "Static symb"
-	case ClsLabel:
+	case ClassLabel:
 		clsstr = "Label"
 	default:
 		clsstr = "Unknown"
@@ -77,7 +77,7 @@ func printSymClass(clas uint8) {
 }
 
 func GetStrings(fl *os.File, hdr Header) ([]string, error) {
-	_, err := fl.Seek(int64(hdr.Symptr)+int64(hdr.Nsyms)*18+4, io.SeekStart)
+	_, err := fl.Seek(int64(hdr.Symptr)+int64(hdr.NSyms)*18+4, io.SeekStart)
 	if err != nil {
 		return nil, errors.New("no strings")
 	}
